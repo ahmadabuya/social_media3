@@ -9,7 +9,7 @@ export const createPost = async (req, res) => {
 
   try {
     await newPost.save();
-    res.status(200).json("Post Create");
+    res.status(200).json(newPost);
   } catch (error) {
     res.status(500).json(error);
   }
@@ -121,3 +121,4 @@ export const getTimelinePosts = async (req, res) => {
     res.status(500).json(error);
   }
 };
+

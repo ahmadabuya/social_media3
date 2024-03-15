@@ -1,5 +1,6 @@
 import UserModel from "../models/userModel.js";
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 // Get a User
 export const getUser = async (req, res) => {
@@ -22,33 +23,39 @@ export const getUser = async (req, res) => {
 };
 
 
-// udpate a user
+// // udpate a user
 
-export const updateUser = async (req, res) => {
-  const id = req.params.id;
-  // console.log("Data Received", req.body)
-  const { currentUserId, currentUserAdminStatus, password } = req.body;
+// export const updateUser = async (req, res) => {
+//   const id = req.params.id;
+//   // console.log("Data Received", req.body)
+//   const { _id, currentUserAdminStatus, password } = req.body;
 
-  if (id === currentUserId || currentUserAdminStatus ){
-    try {
-      if (password) 
-    {
-      const salt = await bcrypt.genSalt(10);
-      req.body.password = await bcrypt.hash(password, salt);
-    }
+//   if (id === _id){
+//     try {
+//       if (password) 
+//     {
+//       const salt = await bcrypt.genSalt(10);
+//       req.body.password = await bcrypt.hash(password, salt);
+//     }
 
-      const user = await UserModel.findByIdAndUpdate(id, req.body, {new:true})
+//       const user = await UserModel.findByIdAndUpdate(id, req.body, {new:true})
+
+//       const token = jwt.sign(
+//               { username: user.username, id: user._id },
+//               process.env.JWT_KEY,
+//               { expiresIn: "1h" }
+//               );
       
-      res.status(200).json(user)
-    } catch (error) {
-      res.status(500).json(error); 
-    }
-  }
-   else {
-    res
-      .status(403).json("Access Denied! You can update only your own Account.");
-  }
-};
+//       res.status(200).json(user, token)
+//     } catch (error) {
+//       res.status(500).json(error); 
+//     }
+//   }
+//    else {
+//     res
+//       .status(403).json("Access Denied! You can update only your own Account.");
+//   }
+// };
 
 
 
@@ -202,41 +209,41 @@ export const UnFollowUser = async (req, res) => {
 //   }
 // };
 
-// // udpate a user
+// udpate a user
 
-// export const updateUser = async (req, res) => {
-//   const id = req.params.id;
-//   // console.log("Data Received", req.body)
-//   const { _id, currentUserAdmin, password } = req.body;
+export const updateUser = async (req, res) => {
+  const id = req.params.id;
+  // console.log("Data Received", req.body)
+  const { _id, currentUserAdmin, password } = req.body;
   
-//   if (id === _id) {
-//     try {
-//       // if we also have to update password then password will be bcrypted again
-//       if (password) {
-//         const salt = await bcrypt.genSalt(10);
-//         req.body.password = await bcrypt.hash(password, salt);
-//       }
-//       // have to change this
-//       const user = await UserModel.findByIdAndUpdate(id, req.body, {
-//         new: true,
-//       });
-//       const token = jwt.sign(
-//         { username: user.username, id: user._id },
-//         process.env.JWTKEY,
-//         { expiresIn: "1h" }
-//       );
-//       console.log({user, token})
-//       res.status(200).json({user, token});
-//     } catch (error) {
-//       console.log("Error agya hy")
-//       res.status(500).json(error);
-//     }
-//   } else {
-//     res
-//       .status(403)
-//       .json("Access Denied! You can update only your own Account.");
-//   }
-// };
+  if (id === _id) {
+    try {
+      // if we also have to update password then password will be bcrypted again
+      if (password) {
+        const salt = await bcrypt.genSalt(10);
+        req.body.password = await bcrypt.hash(password, salt);
+      }
+      // have to change this
+      const user = await UserModel.findByIdAndUpdate(id, req.body, {
+        new: true,
+      });
+      const token = jwt.sign(
+        { username: user.username, id: user._id },
+        process.env.JWT_KEY,
+        { expiresIn: "1h" }
+      );
+      console.log({user, token})
+      res.status(200).json({user, token});
+    } catch (error) {
+      console.log("Error agya hy")
+      res.status(500).json(error);
+    }
+  } else {
+    res
+      .status(403)
+      .json("Access Denied! You can update only your own Account.");
+  }
+};
 
 // // Delete a user
 // export const deleteUser = async (req, res) => {
